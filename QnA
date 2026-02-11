@@ -1,7 +1,7 @@
-An upstream system has been configured to pass the date for a given batch of data to the Databricks Jobs API as a parameter. The notebook to be scheduled will use this parameter to load data with the following code: df = spark.read.format("parquet").load(f"/mnt/source/(date)")
+Q1. An upstream system has been configured to pass the date for a given batch of data to the Databricks Jobs API as a parameter. The notebook to be scheduled will use this parameter to load data with the following code: df = spark.read.format("parquet").load(f"/mnt/source/(date)")
 Which code block should be used to create the date Python variable used in the above code block? 
 
-To retrieve a parameter passed to a Databricks Job and assign it to a Python variable, you should use the dbutils.widgets.get() function.
+Answer: To retrieve a parameter passed to a Databricks Job and assign it to a Python variable, you should use the dbutils.widgets.get() function.
 # Fetches the "date" parameter passed from the Databricks Jobs API
 date = dbutils.widgets.get("date")
 Explanation
@@ -21,3 +21,79 @@ If you want the notebook to be runnable manually (outside of a scheduled job) wi
 dbutils.widgets.text("date", "2023-01-01") 
 # This retrieves the actual value (either the default or the one passed by the API)
 date = dbutils.widgets.get("date")
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Q2. The Databricks workspace administrator has configured interactive clusters for each of the data engineering groups. To control costs, clusters are set to terminate after 30 minutes of inactivity. Each user should be able to execute workloads against their assigned clusters at any time of the day.
+Assuming users have been added to a workspace but not granted any permissions, which of the following describes the minimal permissions a user would need to start and attach to an already configured cluster.
+
+To start and attach to an already configured Databricks cluster that has been terminated (due to inactivity), the minimal permission required is:
+
+Answer: Can Restart
+Databricks uses a hierarchical permission model for clusters. Here is why Can Restart is the specific requirement for this scenario:
+
+Can Attach To (Insufficient):
+This permission allows a user to see the cluster in the dropdown menu and attach a notebook to it only if the cluster is already running.
+If the cluster is "Terminated" (which happens after 30 minutes of inactivity in your scenario), a user with only Can Attach To permissions cannot trigger the cluster to start. They would be blocked until someone with higher permissions starts it.
+Can Restart (The Minimal Requirement):
+This level includes all "Can Attach To" privileges plus the ability to start a terminated cluster.
+Since cost-control measures (30-minute auto-termination) ensure the clusters are often off, users must have Can Restart to wake the cluster up and begin their work at any time of the day.
+
+Can Manage (Excessive):
+This provides full control, including the ability to edit the cluster's configuration (size, auto-termination settings, etc.) and change permissions for other users. While this would work, it is not "minimal."
+Summary Table
+Permission       	Can see/attach?	  Can start (if off)?	  Can edit config?
+No Permissions	        No	            No                	No
+Can Attach        To	Yes (if running)	No	                No
+Can Restart	            Yes            	Yes	                No
+Can Manage	            Yes	            Yes                	Yes
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
