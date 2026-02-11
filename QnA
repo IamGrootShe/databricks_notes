@@ -1,0 +1,23 @@
+An upstream system has been configured to pass the date for a given batch of data to the Databricks Jobs API as a parameter. The notebook to be scheduled will use this parameter to load data with the following code: df = spark.read.format("parquet").load(f"/mnt/source/(date)")
+Which code block should be used to create the date Python variable used in the above code block? 
+
+To retrieve a parameter passed to a Databricks Job and assign it to a Python variable, you should use the dbutils.widgets.get() function.
+# Fetches the "date" parameter passed from the Databricks Jobs API
+date = dbutils.widgets.get("date")
+Explanation
+Widgets as Parameters: In Databricks, when you pass notebook_params via the Jobs API or configure parameters in the Job UI, Databricks treats these as Widgets.
+dbutils.widgets.get("key"): This is the standard utility method used to extract the value of a widget. If the upstream system passes a key-value pair like {"date": "2023-10-27"}, get("date") will return the string "2023-10-27".
+Variable Assignment: By assigning this to the variable date, it becomes available for use in your subsequent Spark code.
+Note on your usage code
+In your provided code snippet: df = spark.read.format("parquet").load(f"/mnt/source/(date)")
+
+If you are using a Python f-string, you should use curly braces {} instead of parentheses () to interpolate the variable:
+
+df = spark.read.format("parquet").load(f"/mnt/source/{date}")
+Best Practice: Default Values
+If you want the notebook to be runnable manually (outside of a scheduled job) without failing, it is best practice to "define" the widget at the top of the notebook with a default value:
+
+# This creates the widget UI element and sets a default if not provided by a Job
+dbutils.widgets.text("date", "2023-01-01") 
+# This retrieves the actual value (either the default or the one passed by the API)
+date = dbutils.widgets.get("date")
